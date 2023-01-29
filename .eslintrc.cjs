@@ -11,5 +11,6 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'prefer-arrow-callback': 0,
   },
 };

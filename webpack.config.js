@@ -8,10 +8,17 @@ const __dirname = path.dirname(__filename);
 
 export default {
   mode: process.env.NODE_ENV || 'development',
+  resolve: {
+    modules: [path.join(__dirname, 'src'), 'node_modules'],
+    extensions: ['.js'],
+  },
   module: {
     rules: [
       {
         test: /\.js$/,
+        resolve: {
+          fullySpecified: false,
+        },
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -20,7 +27,19 @@ export default {
           },
         },
       },
-      { test: /\.css$/, use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'] },
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              esModule: true,
+            },
+          },
+          'css-loader',
+          'postcss-loader',
+        ],
+      },
       {
         test: /\.scss$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader', 'postcss-loader'],
@@ -53,5 +72,6 @@ export default {
     },
     compress: true,
     port: 9000,
+    hot: true,
   },
 };

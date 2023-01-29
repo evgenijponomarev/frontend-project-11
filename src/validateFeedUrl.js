@@ -1,21 +1,14 @@
 import { string } from 'yup';
-
-const urlValidator = string().url().required();
+import i18next from 'i18next';
 
 const validateFeedUrl = (value, feeds) => (
-  urlValidator.validate(value)
-    .then(() => {
-      const alreadyAdded = feeds.includes(value);
-
-      return {
-        isValid: !alreadyAdded,
-        errorMessage: alreadyAdded ? 'RSS уже существует' : '',
-      };
+  string()
+    .test('isset', i18next.t('validationErrorIsset'), function () {
+      return !feeds.includes(value) || this.createError();
     })
-    .catch(() => ({
-      isValid: false,
-      errorMessage: 'Ссылка должна быть валидным URL',
-    }))
+    .url(i18next.t('validationErrorUrl'))
+    .required()
+    .validate(value)
 );
 
 export default validateFeedUrl;

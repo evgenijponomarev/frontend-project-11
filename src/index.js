@@ -3,36 +3,25 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import onChange from 'on-change';
 
 import validateFeedUrl from './validateFeedUrl';
+import i18nInit from './i18n';
 
 const formEl = document.querySelector('.rss-form');
 const inputEl = formEl.querySelector('#url-input');
 const feedbackEl = document.querySelector('.feedback');
 
-const renderInput = (inputState) => {
-  const classListMethod = inputState.isValid ? 'remove' : 'add';
-  inputEl.classList[classListMethod]('is-invalid');
-  inputEl.value = inputState.value;
-  feedbackEl.textContent = inputState.errorMessage;
-};
-
-const render = ({ input }) => {
-  renderInput(input);
-};
-
-function onChangeState() { render(this); }
-
-const state = onChange({
+const defaultState = {
   feeds: [],
   input: {
-    value: '',
     isValid: true,
     errorMessage: '',
   },
-}, onChangeState);
-
-const onInput = () => {
-  state.input.value = inputEl.value;
 };
+
+const state = onChange(defaultState, function () {
+  const classListMethod = this.input.isValid ? 'remove' : 'add';
+  inputEl.classList[classListMethod]('is-invalid');
+  feedbackEl.textContent = this.input.errorMessage;
+});
 
 const onSubmit = (event) => {
   event.preventDefault();
@@ -40,16 +29,21 @@ const onSubmit = (event) => {
   const newFeedUrl = inputEl.value;
 
   validateFeedUrl(newFeedUrl, state.feeds)
-    .then(({ isValid, errorMessage }) => {
-      state.input.isValid = isValid;
-      state.input.errorMessage = errorMessage;
-
-      if (!isValid) return;
-
+    .then(() => {
+      state.input.isValid = true;
+      state.input.errorMessage = '';
       state.feeds.push(newFeedUrl);
-      state.input.value = '';
-    });
+      inputEl.value = '';
+    })
+    .catch((error) => {
+      state.input.isValid = false;
+      state.input.errorMessage = error.message;
+    })
+    .then(() => inputEl.focus());
 };
 
-inputEl.addEventListener('input', onInput);
-formEl.addEventListener('submit', onSubmit);
+const startApp = () => {
+  formEl.addEventListener('submit', onSubmit);
+};
+
+i18nInit(startApp);

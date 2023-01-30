@@ -3,7 +3,7 @@ import i18next from 'i18next';
 
 const validateFeedUrl = (value, feeds) => (
   string()
-    .test('isset', i18next.t('validationErrorIsset'), function () {
+    .test('uniq', i18next.t('validationErrorIsset'), function () {
       return !feeds.includes(value) || this.createError();
     })
     .url(i18next.t('validationErrorUrl'))

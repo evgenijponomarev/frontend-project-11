@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 export const FORM_STATE = {
   empty: 'empty',
   typing: 'typing',
@@ -6,3 +5,5 @@ export const FORM_STATE = {
   error: 'error',
   success: 'success',
 };
+
+export const UPDATE_TIME = 5000;

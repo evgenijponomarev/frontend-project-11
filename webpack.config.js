@@ -3,8 +3,8 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url); // eslint-disable-line no-underscore-dangle
+const __dirname = path.dirname(__filename); // eslint-disable-line no-underscore-dangle
 
 export default {
   mode: process.env.NODE_ENV || 'development',

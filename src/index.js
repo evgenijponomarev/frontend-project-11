@@ -28,7 +28,7 @@ const defaultState = {
   posts: [],
 };
 
-const state = onChange(defaultState, function (path) {
+const state = onChange(defaultState, function onChangeState(path) {
   if (path === 'form') {
     renderForm(this.form);
   } else if (path === 'message') {

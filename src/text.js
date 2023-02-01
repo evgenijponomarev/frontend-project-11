@@ -6,6 +6,7 @@ export default {
       networkError: 'Ошибка сети',
       parseError: 'Ошибка чтения данных',
       successMessage: 'RSS успешно загружен',
+      buttonText: 'Просмотр',
     },
   },
 };

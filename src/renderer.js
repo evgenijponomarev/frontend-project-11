@@ -1,16 +1,23 @@
 import sortBy from 'lodash/sortBy';
+import Modal from 'bootstrap/js/dist/modal';
+import i18next from 'i18next';
 
 import { FORM_STATE } from './constants';
 
-const createRenderer = (domElements) => {
-  const {
-    inputEl,
-    feedbackEl,
-    feedsEl,
-    feedsListEl,
-    postsEl,
-    postsListEl,
-  } = domElements;
+const createRenderer = () => {
+  const formEl = document.querySelector('.rss-form');
+  const inputEl = formEl.querySelector('#url-input');
+  const feedbackEl = document.querySelector('.feedback');
+  const feedsEl = document.querySelector('.feeds');
+  const postsEl = document.querySelector('.posts');
+  const modalEl = document.querySelector('#modal');
+  const feedsListEl = feedsEl.querySelector('.list-group');
+  const postsListEl = postsEl.querySelector('.list-group');
+  const modalTitleEl = modalEl.querySelector('.modal-title');
+  const modalBodyEl = modalEl.querySelector('.modal-body');
+  const fullArticleEl = modalEl.querySelector('.full-article');
+
+  const modal = new Modal(modalEl);
 
   const createListItem = (classList = []) => {
     const el = document.createElement('li');
@@ -22,9 +29,9 @@ const createRenderer = (domElements) => {
     return el;
   };
 
-  const createPost = (post) => {
+  const createPost = (post, markAsRead) => {
     const postLink = document.createElement('a');
-    postLink.classList.add('fw-bold');
+    postLink.classList.add(post.isRead ? 'fw-normal' : 'fw-bold');
     postLink.setAttribute('href', post.link);
     postLink.textContent = post.title;
 
@@ -32,7 +39,15 @@ const createRenderer = (domElements) => {
     postButton.classList.add('btn');
     postButton.classList.add('btn-sm');
     postButton.classList.add('btn-outline-primary');
-    postButton.textContent = 'Просмотр';
+    postButton.textContent = i18next.t('buttonText');
+
+    postButton.addEventListener('click', () => {
+      modalTitleEl.textContent = post.title;
+      modalBodyEl.innerHTML = post.description;
+      fullArticleEl.setAttribute('href', post.link);
+      markAsRead(post.link);
+      modal.show();
+    });
 
     const postEl = createListItem(['d-flex', 'justify-content-between', 'align-items-start']);
 
@@ -122,7 +137,7 @@ const createRenderer = (domElements) => {
     }
   };
 
-  const renderPosts = (posts) => {
+  const renderPosts = (posts, markAsRead) => {
     postsListEl.innerHTML = '';
 
     if (posts.length === 0) {
@@ -130,7 +145,7 @@ const createRenderer = (domElements) => {
     } else {
       sortBy(posts, ({ timestamp }) => -timestamp)
         .forEach((post) => {
-          const postEl = createPost(post);
+          const postEl = createPost(post, markAsRead);
           postsListEl.appendChild(postEl);
         });
 
@@ -143,6 +158,8 @@ const createRenderer = (domElements) => {
     renderMessage,
     renderFeeds,
     renderPosts,
+    formEl,
+    inputEl,
   };
 };
 

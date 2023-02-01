@@ -12,27 +12,14 @@ import parseRss from './parseRss';
 import { FORM_STATE, UPDATE_TIME } from './constants';
 import createRenderer from './renderer';
 
-const formEl = document.querySelector('.rss-form');
-const inputEl = formEl.querySelector('#url-input');
-const feedbackEl = document.querySelector('.feedback');
-const feedsEl = document.querySelector('.feeds');
-const feedsListEl = feedsEl.querySelector('.list-group');
-const postsEl = document.querySelector('.posts');
-const postsListEl = postsEl.querySelector('.list-group');
-
 const {
   renderFeeds,
   renderPosts,
   renderForm,
   renderMessage,
-} = createRenderer({
+  formEl,
   inputEl,
-  feedbackEl,
-  feedsEl,
-  feedsListEl,
-  postsEl,
-  postsListEl,
-});
+} = createRenderer();
 
 const defaultState = {
   form: FORM_STATE.empty,
@@ -42,20 +29,17 @@ const defaultState = {
 };
 
 const state = onChange(defaultState, function (path) {
-  switch (path) {
-    case 'form':
-      renderForm(this.form);
-      break;
-    case 'message':
-      renderMessage(this.message);
-      break;
-    case 'feeds':
-      renderFeeds(this.feeds);
-      break;
-    case 'posts':
-      renderPosts(this.posts);
-      break;
-    default:
+  if (path === 'form') {
+    renderForm(this.form);
+  } else if (path === 'message') {
+    renderMessage(this.message);
+  } else if (path === 'feeds') {
+    renderFeeds(this.feeds);
+  } else if (path.match(/posts/)) {
+    renderPosts(this.posts, (postLink) => {
+      const postIndex = this.posts.findIndex((p) => p.link === postLink);
+      this.posts[postIndex].isRead = true;
+    });
   }
 });
 
@@ -87,6 +71,8 @@ const loadFeed = (url) => {
 
 const onSubmit = (event) => {
   event.preventDefault();
+
+  if (state.form === FORM_STATE.sending) return;
 
   state.form = FORM_STATE.sending;
 

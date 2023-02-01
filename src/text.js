@@ -4,7 +4,7 @@ export default {
       validationErrorIsset: 'RSS уже существует',
       validationErrorUrl: 'Ссылка должна быть валидным URL',
       networkError: 'Ошибка сети',
-      parseError: 'Ошибка чтения данных',
+      parseError: 'Ресурс не содержит валидный RSS',
       successMessage: 'RSS успешно загружен',
       buttonText: 'Просмотр',
     },
